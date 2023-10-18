@@ -1,5 +1,5 @@
 <?php
-
+require_once 'email.php';
 include 'config.php';
 
 session_start();
@@ -30,74 +30,139 @@ if(isset($_GET['delete'])){
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>orders</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders</title>
 
-   <!-- font awesome cdn link  -->
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-   <!-- custom admin css file link  -->
-   <link rel="stylesheet" href="css/admin_style.css">
+  <link rel="stylesheet" href="css/admin_style.css">
+
+   <style>
+table {
+  background-color: var(--color-white);
+  width: 100%;
+  padding: var(--card-padding);
+  text-align: center;
+  box-shadow: var(--box-shadow);
+  border-radius: var(--card-border-radius);
+  transition: all 0.3s ease;
+}
+
+table:hover {
+  box-shadow: none;
+}
+
+table tbody td {
+  height: 2.8rem;
+  border-bottom: 1px solid var(--color-light);
+  color: var(--color-dark-variant);
+}
+
+table tbody tr:last-child td {
+  border: none;
+}
+
+
+
+ /* Style the reset button */
+ #resetButton {
+         background-color: #ff5555;
+         color: #ffffff;
+         padding: 20px 80px; /* Add more padding for spacing */
+         border: none;
+         cursor: pointer;
+         font-size: 16px;
+         border-radius: 5px;
+         
+      }
+      #resetButton:hover {
+         background-color: #ff0000;
+      }
+
+
+  </style>
 
 </head>
 <body>
-   
+
 <?php include 'admin_header.php'; ?>
 
 <section class="orders">
 
-   <h1 class="title">placed orders</h1>
+  <h1 class="title">Order History</h1>
 
-   <div class="box-container">
-      <?php
-      $select_orders = mysqli_query($conn, "SELECT * FROM `orders`") or die('query failed');
-      if(mysqli_num_rows($select_orders) > 0){
-         while($fetch_orders = mysqli_fetch_assoc($select_orders)){
-      ?>
-      <div class="box">
-         <p> user id : <span><?php echo $fetch_orders['user_id']; ?></span> </p>
-         <p> placed on : <span><?php echo $fetch_orders['placed_on']; ?></span> </p>
-         <p> name : <span><?php echo $fetch_orders['name']; ?></span> </p>
-         <p> number : <span><?php echo $fetch_orders['number']; ?></span> </p>
-         <p> email : <span><?php echo $fetch_orders['email']; ?></span> </p>
-         <p> address : <span><?php echo $fetch_orders['address']; ?></span> </p>
-         <p> total products : <span><?php echo $fetch_orders['total_products']; ?></span> </p>
-         <p> total price : <span>$<?php echo $fetch_orders['total_price']; ?>/-</span> </p>
-         <p> payment method : <span><?php echo $fetch_orders['method']; ?></span> </p>
-         <form action="" method="post">
-            <input type="hidden" name="order_id" value="<?php echo $fetch_orders['id']; ?>">
-            <select name="update_payment">
-               <option value="" selected disabled><?php echo $fetch_orders['payment_status']; ?></option>
-               <option value="pending">pending</option>
-               <option value="completed">completed</option>
-            </select>
-            <input type="submit" value="update" name="update_order" class="option-btn">
-            <a href="admin_orders.php?delete=<?php echo $fetch_orders['id']; ?>" onclick="return confirm('delete this order?');" class="delete-btn">delete</a>
-         </form>
-      </div>
-      <?php
-         }
-      }else{
-         echo '<p class="empty">no orders placed yet!</p>';
+  <div class="box-container">
+<table>
+  <thead>
+    <tr>
+      <th>User ID</th>
+      <th>Placed on</th>
+      <th>Name</th>
+      <th> Order Number</th>
+      <th>Email</th>
+      <th>Total products</th>
+      <th>Total price</th>
+      <th>Payment method</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  <?php
+    $select_orders = mysqli_query($conn, "SELECT * FROM `orders`ORDER BY id DESC") or die('query failed');
+    if(mysqli_num_rows($select_orders) > 0){
+      while($fetch_orders = mysqli_fetch_assoc($select_orders)){
+
+        $user = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `users` WHERE id = '{$fetch_orders['user_id']}'"));
+        ?>
+        <tr>
+          <td><?= $fetch_orders['user_id']; ?></td>
+          <td><?= $fetch_orders['placed_on']; ?></td>
+          <td><?= $user['name']; ?></td>
+          <td><?= $fetch_orders['Order_Number']; ?></td>
+          <td><?= $user['email']; ?></td>
+          <td><?= $fetch_orders['total_products']; ?></td>
+          <td>R<?= $fetch_orders['total_price']; ?></td>
+          <td><?= $fetch_orders['method']; ?></td>
+          <td>
+            <form action="" method="post">
+              <input type="hidden" name="order_id" value="<?= $fetch_orders['id']; ?>">
+              <select name="update_payment">
+                <option value="" selected disabled><?= $fetch_orders['payment_status']; ?></option>
+                <option value="pending">Order Pending</option>
+                
+                <option value="45 mins">45 mins till order made</option>
+                
+                <option value="30 mins">30 mins till ready</option>
+                
+                <option value="15 mins">15 mins</option>
+                
+                <option value="completed">Ready!</option>
+              </select>
+              <input type="submit" value="Update" name="update_order" class="option-btn">
+              <a href="admin_orders.php?delete=<?= $fetch_orders['id']; ?>" onclick="return confirm('Delete this order?');" class="delete-btn">Delete</a>
+            </form>
+          </td>
+        </tr>
+        <?php
       }
-      ?>
-   </div>
+    } else {
+      echo '<tr><td colspan="8">No orders placed yet!</td></tr>';
+    }
+    ?>
+  </tbody>
+</table>
+  </div>
 
 </section>
 
 
 
 
-
-
-
-
-
-
-<!-- custom admin js file link  -->
 <script src="js/admin_script.js"></script>
+
+
 
 </body>
 </html>

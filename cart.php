@@ -28,6 +28,19 @@ if(isset($_GET['delete_all'])){
    header('location:cart.php');
 }
 
+
+
+// Generate the random code
+$random_number = mt_rand(10000, 99999);
+$random_letters = chr(mt_rand(65, 90)) . chr(mt_rand(65, 90)) . chr(mt_rand(65, 90));
+$random_code = $random_number . $random_letters;
+
+
+
+
+// Store it in a session variable
+$_SESSION['random_code'] = $random_code;
+
 ?>
 
 <!DOCTYPE html>
@@ -56,7 +69,7 @@ if(isset($_GET['delete_all'])){
 
 <section class="shopping-cart">
 
-   <h1 class="title">products added</h1>
+   <h1 class="title">My cart</h1>
 
    <div class="box-container">
       <?php
@@ -69,13 +82,13 @@ if(isset($_GET['delete_all'])){
          <a href="cart.php?delete=<?php echo $fetch_cart['id']; ?>" class="fas fa-times" onclick="return confirm('delete this from cart?');"></a>
          <img src="uploaded_img/<?php echo $fetch_cart['image']; ?>" alt="">
          <div class="name"><?php echo $fetch_cart['name']; ?></div>
-         <div class="price">$<?php echo $fetch_cart['price']; ?>/-</div>
+         <div class="price">R<?php echo $fetch_cart['price']; ?></div>
          <form action="" method="post">
             <input type="hidden" name="cart_id" value="<?php echo $fetch_cart['id']; ?>">
             <input type="number" min="1" name="cart_quantity" value="<?php echo $fetch_cart['quantity']; ?>">
             <input type="submit" name="update_cart" value="update" class="option-btn">
          </form>
-         <div class="sub-total"> sub total : <span>$<?php echo $sub_total = ($fetch_cart['quantity'] * $fetch_cart['price']); ?>/-</span> </div>
+         <div class="sub-total"> sub total : <span>R<?php echo $sub_total = ($fetch_cart['quantity'] * $fetch_cart['price']); ?></span> </div>
       </div>
       <?php
       $grand_total += $sub_total;
@@ -85,20 +98,51 @@ if(isset($_GET['delete_all'])){
       }
       ?>
    </div>
-
-   <div style="margin-top: 2rem; text-align:center;">
+  <div style="margin-top: 2rem; text-align:center;">
       <a href="cart.php?delete_all" class="delete-btn <?php echo ($grand_total > 1)?'':'disabled'; ?>" onclick="return confirm('delete all from cart?');">delete all</a>
-   </div>
+      
+      
+            <form action=" https://sandbox.payfast.co.za/eng/process" method="post">
+<input type="hidden" name="merchant_id" value="10000100">
+<input type="hidden" name="merchant_key" value="46f0cd694581a">
 
-   <div class="cart-total">
-      <p>grand total : <span>$<?php echo $grand_total; ?>/-</span></p>
-      <div class="flex">
-         <a href="shop.php" class="option-btn">continue shopping</a>
-         <a href="checkout.php" class="btn <?php echo ($grand_total > 1)?'':'disabled'; ?>">proceed to checkout</a>
-      </div>
-   </div>
+
+<!--The commented section is the live version-->
+
+<!--      <form action="https://www.payfast.co.za/eng/process" method="post">-->
+<!--<input type="hidden" name="merchant_id" value="23102524">-->
+<!--<input type="hidden" name="merchant_key" value="lm9zqzkyz5z3c">-->
+<input type="hidden" name="return_url" value="https://micoffe.store/return.php">
+<input type="hidden" name="cancel_url" value="https://micoffe.store/home.php">
+<input type="hidden" name="notify_url" value="https://micoffe.store/order.php">
+
+<input type="hidden" name="amount" value="<?php echo $grand_total; ?>">
+   <input type="hidden" name="item_name" value="<?php echo $random_code; ?>">
+   <input type="submit">
+</form> 
+
+</div>
 
 </section>
+
+
+
+
+
+
+
+
+
+
+<?php include 'footer.php'; ?>
+
+<!-- custom js file link  -->
+<script src="js/script.js"></script>
+
+</body>
+</html>
+
+
 
 
 

@@ -1,53 +1,18 @@
 <?php
 
+
 include 'config.php';
 
 session_start();
+
 
 $user_id = $_SESSION['user_id'];
 
 if(!isset($user_id)){
    header('location:login.php');
 }
+//  this section is meant to ensure that the return page can only be accessed by creating some form of boolean  that turs return into 1 and only when it's one are allowed to access the return page and it is only turned to 1 when you click the pay now button but if you open a page it is intialized
 
-if(isset($_POST['order_btn'])){
-
-   $name = mysqli_real_escape_string($conn, $_POST['name']);
-   $number = $_POST['number'];
-   $email = mysqli_real_escape_string($conn, $_POST['email']);
-   $method = mysqli_real_escape_string($conn, $_POST['method']);
-   $address = mysqli_real_escape_string($conn, 'flat no. '. $_POST['flat'].', '. $_POST['street'].', '. $_POST['city'].', '. $_POST['country'].' - '. $_POST['pin_code']);
-   $placed_on = date('d-M-Y');
-
-   $cart_total = 0;
-   $cart_products[] = '';
-
-   $cart_query = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
-   if(mysqli_num_rows($cart_query) > 0){
-      while($cart_item = mysqli_fetch_assoc($cart_query)){
-         $cart_products[] = $cart_item['name'].' ('.$cart_item['quantity'].') ';
-         $sub_total = ($cart_item['price'] * $cart_item['quantity']);
-         $cart_total += $sub_total;
-      }
-   }
-
-   $total_products = implode(', ',$cart_products);
-
-   $order_query = mysqli_query($conn, "SELECT * FROM `orders` WHERE name = '$name' AND number = '$number' AND email = '$email' AND method = '$method' AND address = '$address' AND total_products = '$total_products' AND total_price = '$cart_total'") or die('query failed');
-
-   if($cart_total == 0){
-      $message[] = 'your cart is empty';
-   }else{
-      if(mysqli_num_rows($order_query) > 0){
-         $message[] = 'order already placed!'; 
-      }else{
-         mysqli_query($conn, "INSERT INTO `orders`(user_id, name, number, email, method, address, total_products, total_price, placed_on) VALUES('$user_id', '$name', '$number', '$email', '$method', '$address', '$total_products', '$cart_total', '$placed_on')") or die('query failed');
-         $message[] = 'order placed successfully!';
-         mysqli_query($conn, "DELETE FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
-      }
-   }
-   
-}
 
 ?>
 
@@ -85,73 +50,30 @@ if(isset($_POST['order_btn'])){
             $total_price = ($fetch_cart['price'] * $fetch_cart['quantity']);
             $grand_total += $total_price;
    ?>
-   <p> <?php echo $fetch_cart['name']; ?> <span>(<?php echo '$'.$fetch_cart['price'].'/-'.' x '. $fetch_cart['quantity']; ?>)</span> </p>
+   <p> <?php echo $fetch_cart['name']; ?> <span>(<?php echo 'R'.$fetch_cart['price'].'/-'.' x '. $fetch_cart['quantity']; ?>)</span> </p>
    <?php
       }
    }else{
       echo '<p class="empty">your cart is empty</p>';
    }
    ?>
-   <div class="grand-total"> grand total : <span>$<?php echo $grand_total; ?>/-</span> </div>
+   <div class="grand-total"> grand total : <span>R<?php echo $grand_total; ?>/-</span> </div>
+   
+   
+      <form action="https://www.payfast.co.za/eng/process" method="post">
+<input type="hidden" name="merchant_id" value="23102524">
+<input type="hidden" name="merchant_key" value="lm9zqzkyz5z3c">
+<input type="hidden" name="return_url" value="https://www.example.com/success">
+<input type="hidden" name="cancel_url" value="https://www.example.com/cancel">
+<input type="hidden" name="notify_url" value="https://www.example.com/notify">
+
+<input type="hidden" name="amount" value="<?php echo $grand_total; ?>">
+   <input type="hidden" name="item_name" value="<?php echo $random_code; ?>">
+   <input type="submit">
+</form> 
+
 
 </section>
-
-<section class="checkout">
-
-   <form action="" method="post">
-      <h3>place your order</h3>
-      <div class="flex">
-         <div class="inputBox">
-            <span>your name :</span>
-            <input type="text" name="name" required placeholder="enter your name">
-         </div>
-         <div class="inputBox">
-            <span>your number :</span>
-            <input type="number" name="number" required placeholder="enter your number">
-         </div>
-         <div class="inputBox">
-            <span>your email :</span>
-            <input type="email" name="email" required placeholder="enter your email">
-         </div>
-         <div class="inputBox">
-            <span>payment method :</span>
-            <select name="method">
-               <option value="cash on delivery">cash on delivery</option>
-               <option value="credit card">credit card</option>
-               <option value="paypal">paypal</option>
-               <option value="paytm">paytm</option>
-            </select>
-         </div>
-         <div class="inputBox">
-            <span>address line 01 :</span>
-            <input type="number" min="0" name="flat" required placeholder="e.g. flat no.">
-         </div>
-         <div class="inputBox">
-            <span>address line 01 :</span>
-            <input type="text" name="street" required placeholder="e.g. street name">
-         </div>
-         <div class="inputBox">
-            <span>city :</span>
-            <input type="text" name="city" required placeholder="e.g. mumbai">
-         </div>
-         <div class="inputBox">
-            <span>state :</span>
-            <input type="text" name="state" required placeholder="e.g. maharashtra">
-         </div>
-         <div class="inputBox">
-            <span>country :</span>
-            <input type="text" name="country" required placeholder="e.g. india">
-         </div>
-         <div class="inputBox">
-            <span>pin code :</span>
-            <input type="number" min="0" name="pin_code" required placeholder="e.g. 123456">
-         </div>
-      </div>
-      <input type="submit" value="order now" class="btn" name="order_btn">
-   </form>
-
-</section>
-
 
 
 
@@ -161,7 +83,6 @@ if(isset($_POST['order_btn'])){
 
 
 <?php include 'footer.php'; ?>
-
 <!-- custom js file link  -->
 <script src="js/script.js"></script>
 

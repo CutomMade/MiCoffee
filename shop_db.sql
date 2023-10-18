@@ -93,11 +93,20 @@ CREATE TABLE `products` (
 CREATE TABLE `users` (
   `id` int(100) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `password` varchar(100) NOT NULL,
   `user_type` varchar(20) NOT NULL DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE email_verification (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(100) NOT NULL,
+    'email' VARCHAR(255) NOT NULL,
+    `password` VARCHAR(100) NOT NULL,
+    otp VARCHAR(6) NOT NULL,
+    timestamp INT NOT NULL,
+    'user_type' VARCHAR(20) NOT NULL DEFAULT 'user'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 --
 -- Indexes for dumped tables
 --

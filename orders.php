@@ -26,45 +26,101 @@ if(!isset($user_id)){
    <!-- custom css file link  -->
    <link rel="stylesheet" href="css/style.css">
 
+      <style>
+table {
+  background-color: var(--color-white);
+  width: 100%;
+  padding: var(--card-padding);
+  text-align: center;
+  box-shadow: var(--box-shadow);
+  border-radius: var(--card-border-radius);
+  transition: all 0.3s ease;
+}
+
+table:hover {
+  box-shadow: none;
+}
+
+table tbody td {
+  height: 2.8rem;
+  border-bottom: 1px solid var(--color-light);
+  color: var(--color-dark-variant);
+}
+
+table tbody tr:last-child td {
+  border: none;
+}
+  </style>
+
+
 </head>
 <body>
+
+   <?php include 'header.php'; ?>
    
-<?php include 'header.php'; ?>
-
-<div class="heading">
-   <h3>your orders</h3>
-   <p> <a href="home.php">home</a> / orders </p>
-</div>
-
 <section class="placed-orders">
 
-   <h1 class="title">placed orders</h1>
+<h1 class="title" style="color: green">Order history </h1>
 
-   <div class="box-container">
 
-      <?php
-         $order_query = mysqli_query($conn, "SELECT * FROM `orders` WHERE user_id = '$user_id'") or die('query failed');
-         if(mysqli_num_rows($order_query) > 0){
-            while($fetch_orders = mysqli_fetch_assoc($order_query)){
-      ?>
-      <div class="box">
-         <p> placed on : <span><?php echo $fetch_orders['placed_on']; ?></span> </p>
-         <p> name : <span><?php echo $fetch_orders['name']; ?></span> </p>
-         <p> number : <span><?php echo $fetch_orders['number']; ?></span> </p>
-         <p> email : <span><?php echo $fetch_orders['email']; ?></span> </p>
-         <p> address : <span><?php echo $fetch_orders['address']; ?></span> </p>
-         <p> payment method : <span><?php echo $fetch_orders['method']; ?></span> </p>
-         <p> your orders : <span><?php echo $fetch_orders['total_products']; ?></span> </p>
-         <p> total price : <span>$<?php echo $fetch_orders['total_price']; ?>/-</span> </p>
-         <p> payment status : <span style="color:<?php if($fetch_orders['payment_status'] == 'pending'){ echo 'red'; }else{ echo 'green'; } ?>;"><?php echo $fetch_orders['payment_status']; ?></span> </p>
-         </div>
-      <?php
-       }
-      }else{
-         echo '<p class="empty">no orders placed yet!</p>';
+<div class="box-container">
+
+<table>
+  <thead>
+    <tr>
+      <th>Placed On</th>
+      <th>Name</th>
+      
+       <th>Order Number</th>
+      <th>Email</th>
+      <th>Total Products</th>
+      <th>Total Price</th>
+      <th>Payment Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+$order_query = mysqli_query($conn, "SELECT * FROM `orders` WHERE user_id = '$user_id' ORDER BY id DESC") or die('query failed');
+
+
+      if (mysqli_num_rows($order_query) > 0) {
+        while ($fetch_orders = mysqli_fetch_assoc($order_query)) {
+
+          $user_query = mysqli_query($conn, "SELECT * FROM `users` WHERE id = '$user_id'") or die('query failed');
+          if (mysqli_num_rows($user_query) > 0) {
+            while ($fetch_users = mysqli_fetch_assoc($user_query)) {
+    ?>
+    <tr>
+      <td><?= $fetch_orders['placed_on']; ?></td>
+      <td><?= $fetch_users['name']; ?></td>
+      
+       <td><?= $fetch_orders['Order_Number']; ?></td>
+      <td><?= $fetch_users['email']; ?></td>
+      <td><?= $fetch_orders['total_products']; ?></td>
+      <td>R<?= $fetch_orders['total_price']; ?></td>
+      <td><span style="color:<?php if ($fetch_orders['payment_status'] == 'pending') {
+          echo 'red';
+        } else {
+          echo 'green';
+        } ?>;"><?php echo $fetch_orders['payment_status']; ?></span></td>
+    </tr>
+    <?php
+            }
+          } else {
+            echo '<tr><td colspan="6">no orders placed yet!</td></tr>';
+          }
+        }
+      } else {
+        echo '<tr><td colspan="6">no orders placed yet!</td></tr>';
       }
-      ?>
-   </div>
+    ?>
+  </tbody>
+</table>
+
+</div>
+
+</section>
+
 
 </section>
 

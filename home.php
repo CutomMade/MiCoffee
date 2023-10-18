@@ -1,6 +1,7 @@
 <?php
 
 include 'config.php';
+require_once 'email.php';
 
 session_start();
 
@@ -52,16 +53,58 @@ if(isset($_POST['add_to_cart'])){
 <section class="home">
 
    <div class="content">
-      <h3>Hand Picked Book to your door.</h3>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, quod? Reiciendis ut porro iste totam.</p>
-      <a href="about.php" class="white-btn">discover more</a>
+        <p>We’ve got your morning covered with</p>
+     
+      <h3>Coffee</h3>
+      <p>It is best to start your day with a cup of coffee. Discover the best flavours coffee you will ever have. We provide the best for our customers.</p>
+      <a href="orders.php" class="white-btn">Order Now</a>
    </div>
+
+</section>
+
+<section class="discover">
+
+<div class="box-container">
+
+
+
+<div class="box">
+   <h3>Discover the best coffee</h3>
+   <p>Micofffe is a coffee shop that provides you with quality coffee that helps boost your productivity and helps build your mood. Having a cup of coffee is good, but having a cup of real coffee is greater. There is no doubt that you will enjoy this coffee more than others you have ever tasted.</p>
+
+   <div class="content">
+
+   <a href="about.php" class="learn-btn" style="padding: 1rem 3rem;">Learn more</a>
+
+  </div>
+</div>
+
+<div class="box">
+<img src="images/cup.png" alt="" style="max-width: 45%; object-fit: cover;">
+
+</div>
+
+
+
+
+
+
+
+</div>
 
 </section>
 
 <section class="products">
 
-   <h1 class="title">latest products</h1>
+
+       <div class="box-container1">
+   <div class="box1">
+
+
+      <h3>Enjoy a new blend of coffee style</h3>
+      <p>Explore all flavours of coffee with us. There is always a new cup worth experiencing</p>
+
+   </div>
 
    <div class="box-container">
 
@@ -73,7 +116,7 @@ if(isset($_POST['add_to_cart'])){
      <form action="" method="post" class="box">
       <img class="image" src="uploaded_img/<?php echo $fetch_products['image']; ?>" alt="">
       <div class="name"><?php echo $fetch_products['name']; ?></div>
-      <div class="price">$<?php echo $fetch_products['price']; ?>/-</div>
+      <div class="price">R<?php echo $fetch_products['price']; ?></div>
       <input type="number" min="1" name="product_quantity" value="1" class="qty">
       <input type="hidden" name="product_name" value="<?php echo $fetch_products['name']; ?>">
       <input type="hidden" name="product_price" value="<?php echo $fetch_products['price']; ?>">
@@ -94,33 +137,57 @@ if(isset($_POST['add_to_cart'])){
 
 </section>
 
-<section class="about">
 
-   <div class="flex">
 
-      <div class="image">
-         <img src="images/about-img.jpg" alt="">
+
+<section class="different">
+
+       <div class="box-container1">
+   <div class="box1">
+
+      <h3>Why are we different</h3>
+      <p>We don’t just make your coffee, we make your day!</p>
+   </div>
+</div>
+
+
+
+
+
+      <div class="box-container">
+
+      <div class="box">
+         <img src="images/coffee-beans_1.png" alt="" style="max-width: 45%; object-fit: cover; justify-content: center;">
+         <h3>Supreme Beans</h3>
+         <P>Beans that provides great taste</P>
       </div>
 
-      <div class="content">
-         <h3>about us</h3>
-         <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Impedit quos enim minima ipsa dicta officia corporis ratione saepe sed adipisci?</p>
-         <a href="about.php" class="btn">read more</a>
+      <div class="box">
+         <img src="images/badge_1.png" alt="" style="max-width: 45%; object-fit: cover;">
+        <h3>High Quality</h3>
+         <P>We provide the highest quality</P>
+      </div>
+
+      <div class="box">
+
+         <img src="images/coffe-cup_1.png" alt="" style="max-width: 45%; object-fit: cover;">
+         <h3>Extraordinary</h3>
+         
+         <P>Coffee like you have never tasted</P>
+      </div>
+
+      <div class="box">
+         <img src="images/best-price_1.png" alt="" style="max-width: 45%; object-fit: cover;">
+         <h3>Affordable Price</h3>
+         <P style="text-align: center;">Our Coffee prices are easy to afford</P>
       </div>
 
    </div>
 
-</section>
-
-<section class="home-contact">
-
-   <div class="content">
-      <h3>have any questions?</h3>
-      <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Atque cumque exercitationem repellendus, amet ullam voluptatibus?</p>
-      <a href="contact.php" class="white-btn">contact us</a>
-   </div>
 
 </section>
+
+
 
 
 
